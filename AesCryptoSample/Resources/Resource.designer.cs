@@ -1484,6 +1484,8 @@ namespace AesCryptoSample
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_id = global::AesCryptoSample.Resource.Styleable.ViewStubCompat_android_id;
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_inflatedId = global::AesCryptoSample.Resource.Styleable.ViewStubCompat_android_inflatedId;
 			global::Xamarin.Forms.Platform.Resource.Styleable.ViewStubCompat_android_layout = global::AesCryptoSample.Resource.Styleable.ViewStubCompat_android_layout;
+			global::Xamarin.Droid.AesCrypto.Util.Resource.String.app_name = global::AesCryptoSample.Resource.String.app_name;
+			global::Xamarin.Droid.AesCrypto.Util.Resource.String.library_name = global::AesCryptoSample.Resource.String.library_name;
 		}
 		
 		public partial class Animation
@@ -3932,11 +3934,11 @@ namespace AesCryptoSample
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f060020
-			public const int ApplicationName = 2131099680;
+			// aapt resource value: 0x7f060021
+			public const int ApplicationName = 2131099681;
 			
-			// aapt resource value: 0x7f06001f
-			public const int Hello = 2131099679;
+			// aapt resource value: 0x7f060020
+			public const int Hello = 2131099680;
 			
 			// aapt resource value: 0x7f06000c
 			public const int abc_action_bar_home_description = 2131099660;
@@ -3989,14 +3991,17 @@ namespace AesCryptoSample
 			// aapt resource value: 0x7f06001c
 			public const int abc_toolbar_collapse_description = 2131099676;
 			
-			// aapt resource value: 0x7f06001e
-			public const int app_name = 2131099678;
+			// aapt resource value: 0x7f06001f
+			public const int app_name = 2131099679;
 			
 			// aapt resource value: 0x7f06000b
 			public const int appbar_scrolling_view_behavior = 2131099659;
 			
-			// aapt resource value: 0x7f060021
-			public const int hello = 2131099681;
+			// aapt resource value: 0x7f060022
+			public const int hello = 2131099682;
+			
+			// aapt resource value: 0x7f06001e
+			public const int library_name = 2131099678;
 			
 			// aapt resource value: 0x7f060000
 			public const int mr_media_route_button_content_description = 2131099648;

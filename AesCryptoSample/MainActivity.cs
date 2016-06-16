@@ -17,6 +17,8 @@ namespace AesCryptoSample
 
     protected override void OnCreate (Bundle bundle)
     {
+      AesTest.context = this;
+
       // tests can be inside the main assembly
       AddTestAssembly (Assembly.GetExecutingAssembly ());
 

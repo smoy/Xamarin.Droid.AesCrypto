@@ -118,6 +118,10 @@
       <Project>{6CAB5211-4E1E-4BF7-8DD9-556E5E2C4473}</Project>
       <Name>Xamarin.Droid.AesCrypto</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Droid.AesCrypto.Util\Xamarin.Droid.AesCrypto.Util.csproj">
+      <Project>{85E9E903-1FB5-4599-9474-6817C7B2362A}</Project>
+      <Name>Xamarin.Droid.AesCrypto.Util</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.0.1.6505\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.0.1.6505\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
