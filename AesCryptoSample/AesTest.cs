@@ -28,8 +28,8 @@ namespace AesCryptoSample
       var decryptedBytes = AesCbcWithIntegrity.Decrypt (cipherText, privateKey);
       var decryptedText = Encoding.UTF8.GetString (decryptedBytes);
 
-      System.Diagnostics.Contracts.Contract.Assert (mySecretText == decryptedText, 
-                                                    string.Format("Expect {0} but got {1}", mySecretText, decryptedText));
+      Assert.True (mySecretText == decryptedText, 
+                   string.Format("Expect {0} but got {1}", mySecretText, decryptedText));
     }
 
     [Fact]
@@ -40,8 +40,8 @@ namespace AesCryptoSample
       var wrappedKey = secretKeyWrapper.Wrap (secretKeys.ConfidentialityKey);
       var unwrappedKey = secretKeyWrapper.Unwrap (wrappedKey);
 
-      System.Diagnostics.Contracts.Contract.Assert (Enumerable.SequenceEqual(secretKeys.ConfidentialityKey.GetEncoded(),
-                                                                             unwrappedKey.GetEncoded()));
+      Assert.True (AesCbcWithIntegrity.ConstantTimeEq (secretKeys.ConfidentialityKey.GetEncoded (),
+                                                       unwrappedKey.GetEncoded()));
     }
 
     [Fact]
@@ -52,8 +52,8 @@ namespace AesCryptoSample
       var encryptedBundle = EncryptionUtil.Encrypt (context, completeExampleAlias, mySecretText);
       var decryptedText = EncryptionUtil.Decrypt (context, completeExampleAlias, encryptedBundle);
 
-      System.Diagnostics.Contracts.Contract.Assert (mySecretText == decryptedText,
-                                                    string.Format ("Expect {0} but got {1}", mySecretText, decryptedText));
+      Assert.True (mySecretText == decryptedText,
+                   string.Format ("Expect {0} but got {1}", mySecretText, decryptedText));
     }
   }
 }

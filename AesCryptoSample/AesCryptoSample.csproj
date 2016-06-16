@@ -88,6 +88,9 @@
     <Reference Include="xunit.runner.devices">
       <HintPath>..\packages\xunit.runner.devices.2.0.0\lib\MonoAndroid\xunit.runner.devices.dll</HintPath>
     </Reference>
+    <Reference Include="xunit.assert">
+      <HintPath>..\packages\xunit.assert.2.1.0\lib\portable-net45+win8+wp8+wpa81\xunit.assert.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
