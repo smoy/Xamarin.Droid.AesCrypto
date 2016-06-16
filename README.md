@@ -25,3 +25,9 @@ is more appropriate.
   var encryptedBundle = new EncryptedBundle (EncryptedText, EncryptedConfidentialKey, EncryptedIntegrityKey);
   var decryptedText = EncryptionUtil.Decrypt (context, alias, encryptedBundle);
 ```  
+
+#Ongoing work
+
+Currently the library targets API 19. There are many things much better in later API 23, i.e. stream ciphers,
+elliptical curves algorithm. I hope the library will evolve into picking to the most secure implementation
+when its run on more recent API. 
