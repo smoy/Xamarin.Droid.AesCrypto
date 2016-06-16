@@ -4,11 +4,10 @@ namespace Xamarin.Droid.AesCrypto.Util
   public class EncryptedTuple
   {
 
-    public EncryptedTuple (string encryptedText, string encryptedSymmetricKey, string encryptedIntegrityKey)
+    public EncryptedTuple (string encryptedText, string encryptedSymmetricKey)
     {
       EncryptedText = encryptedText;
       EncryptedSymmetricKey = encryptedSymmetricKey;
-      EncryptedIntegrityKey = encryptedIntegrityKey;
     }
 
     public string EncryptedText {
@@ -17,11 +16,6 @@ namespace Xamarin.Droid.AesCrypto.Util
     }
 
     public string EncryptedSymmetricKey {
-      get;
-      private set;
-    }
-
-    public string EncryptedIntegrityKey {
       get;
       private set;
     }

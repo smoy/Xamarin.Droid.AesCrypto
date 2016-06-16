@@ -40,15 +40,13 @@ namespace AesCryptoSample
     {
       var secretKeyWrapper = new SecretKeyWrapper (context, UnitTestAlias);
       var secretKeys = AesCbcWithIntegrity.GenerateKey ();
-      var wrappedKey = secretKeyWrapper.Wrap (secretKeys.ConfidentialityKey);
+      var wrappedKey = secretKeyWrapper.EncryptedThenMac (secretKeys);
 
-      Assert.False (AesCbcWithIntegrity.ConstantTimeEq (secretKeys.ConfidentialityKey.GetEncoded (),
-                                                      wrappedKey));
+      Assert.False (AesCbcWithIntegrity.KeyString(secretKeys) == wrappedKey);
 
-      var unwrappedKey = secretKeyWrapper.Unwrap (wrappedKey);
+      var unwrappedKey = secretKeyWrapper.CheckMacAndDecrypt (wrappedKey);
 
-      Assert.True (AesCbcWithIntegrity.ConstantTimeEq (secretKeys.ConfidentialityKey.GetEncoded (),
-                                                       unwrappedKey.GetEncoded()));
+      Assert.True (AesCbcWithIntegrity.KeyString(secretKeys) == AesCbcWithIntegrity.KeyString (unwrappedKey));
     }
 
     [Fact]

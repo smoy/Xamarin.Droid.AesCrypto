@@ -9,6 +9,9 @@ using Javax.Crypto;
 using Javax.Security.Auth.X500;
 
 using Com.Tozny.Crypto.Android;
+using System.Text;
+using Javax.Crypto.Spec;
+using Java.Security.Cert;
 
 namespace Xamarin.Droid.AesCrypto.Util
 {
@@ -23,16 +26,26 @@ namespace Xamarin.Droid.AesCrypto.Util
   /// </summary>
   public class SecretKeyWrapper
   {
+    public const string DefaultHmacAlgorithm = "SHA256withRSA";
+
     private readonly Cipher cipher;
     private readonly KeyPair pair;
+    private readonly Certificate cert;
+    private readonly string hmacAlgorithm;
 
     static readonly AtomicBoolean prngFixed = new AtomicBoolean (false);
     static readonly object prngLock = new object ();
 
-    public SecretKeyWrapper (Context context, String alias)
+    public SecretKeyWrapper (Context context, String alias) : this (context, alias, DefaultHmacAlgorithm)
+    {
+
+    }
+
+    public SecretKeyWrapper (Context context, String alias, string hmacAlgorithm)
     {
       FixPrng ();
 
+      this.hmacAlgorithm = hmacAlgorithm;
       cipher = Cipher.GetInstance("RSA/ECB/PKCS1Padding");
       var keyStore = KeyStore.GetInstance ("AndroidKeyStore");
       keyStore.Load (null);
@@ -43,6 +56,7 @@ namespace Xamarin.Droid.AesCrypto.Util
       // can read it successfully.
       var entry = (KeyStore.PrivateKeyEntry)keyStore.GetEntry (alias, null);
       pair = new KeyPair (entry.Certificate.PublicKey, entry.PrivateKey);
+      cert = entry.Certificate;
     }
 
     private static void FixPrng ()
@@ -74,14 +88,46 @@ namespace Xamarin.Droid.AesCrypto.Util
       gen.GenerateKeyPair();
     }
 
-    public byte [] Wrap (ISecretKey key) {
-      cipher.Init(CipherMode.WrapMode, pair.Public);
-      return cipher.Wrap(key);
+    public string EncryptedThenMac (AesCbcWithIntegrity.SecretKeys keys) {
+      cipher.Init(CipherMode.EncryptMode, pair.Public);
+      var cipherText = cipher.DoFinal (Encoding.UTF8.GetBytes(AesCbcWithIntegrity.KeyString (keys)));
+      //var integrityKey = new SecretKeySpec (pair.Private.GetEncoded(), HmacAlgorithm);
+      //var mac = AesCbcWithIntegrity.GenerateMac (cipherText, integrityKey);
+
+      Signature s = Signature.GetInstance (hmacAlgorithm);
+      s.InitSign (pair.Private);
+      s.Update (cipherText);
+      byte [] signature = s.Sign ();
+
+
+      return string.Format ("{0}:{1}", Convert.ToBase64String (signature), Convert.ToBase64String (cipherText));
     }
 
-    public ISecretKey Unwrap (byte [] blob) {
-      cipher.Init(CipherMode.UnwrapMode, pair.Private);
-      return (ISecretKey) cipher.Unwrap(blob, "AES", KeyType.SecretKey);
+    public AesCbcWithIntegrity.SecretKeys CheckMacAndDecrypt (string encryptedForm) {
+
+      string [] separators = { ":"};
+      var stuffs = encryptedForm.Split(separators, StringSplitOptions.None);
+      var signature = Convert.FromBase64String(stuffs [0]);
+      var blob = Convert.FromBase64String (stuffs[1]);
+
+      //var integrityKey = new SecretKeySpec (pair.Private.GetEncoded (), HmacAlgorithm);
+      //var generatedMac = AesCbcWithIntegrity.GenerateMac (blob, integrityKey);
+      //if (!AesCbcWithIntegrity.ConstantTimeEq (generatedMac, mac)) {
+      //  throw new GeneralSecurityException ("bad mac");
+      //}
+
+      // prevent padding oracle attack
+      Signature s = Signature.GetInstance (hmacAlgorithm);
+      s.InitVerify (cert.PublicKey);
+      s.Update (blob);
+      if (!s.Verify (signature)) {
+        throw new GeneralSecurityException ("bad mac");
+      }
+
+      cipher.Init(CipherMode.DecryptMode, pair.Private);
+
+      var decrypted = cipher.DoFinal(blob);
+      return AesCbcWithIntegrity.Keys (Encoding.UTF8.GetString (decrypted));
     }
   }
 }
