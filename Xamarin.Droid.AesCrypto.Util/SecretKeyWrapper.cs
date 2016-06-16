@@ -31,21 +31,16 @@ namespace Xamarin.Droid.AesCrypto.Util
     private readonly Cipher cipher;
     private readonly KeyPair pair;
     private readonly Certificate cert;
-    private readonly string hmacAlgorithm;
+    private readonly string HmacAlgorithm;
 
     static readonly AtomicBoolean prngFixed = new AtomicBoolean (false);
     static readonly object prngLock = new object ();
 
-    public SecretKeyWrapper (Context context, String alias) : this (context, alias, DefaultHmacAlgorithm)
-    {
-
-    }
-
-    public SecretKeyWrapper (Context context, String alias, string hmacAlgorithm)
+    public SecretKeyWrapper (Context context, String alias)
     {
       FixPrng ();
 
-      this.hmacAlgorithm = hmacAlgorithm;
+      this.HmacAlgorithm = DefaultHmacAlgorithm;
       cipher = Cipher.GetInstance("RSA/ECB/PKCS1Padding");
       var keyStore = KeyStore.GetInstance ("AndroidKeyStore");
       keyStore.Load (null);
@@ -91,10 +86,8 @@ namespace Xamarin.Droid.AesCrypto.Util
     public string EncryptedThenMac (AesCbcWithIntegrity.SecretKeys keys) {
       cipher.Init(CipherMode.EncryptMode, pair.Public);
       var cipherText = cipher.DoFinal (Encoding.UTF8.GetBytes(AesCbcWithIntegrity.KeyString (keys)));
-      //var integrityKey = new SecretKeySpec (pair.Private.GetEncoded(), HmacAlgorithm);
-      //var mac = AesCbcWithIntegrity.GenerateMac (cipherText, integrityKey);
 
-      Signature s = Signature.GetInstance (hmacAlgorithm);
+      Signature s = Signature.GetInstance (HmacAlgorithm);
       s.InitSign (pair.Private);
       s.Update (cipherText);
       byte [] signature = s.Sign ();
@@ -110,14 +103,8 @@ namespace Xamarin.Droid.AesCrypto.Util
       var signature = Convert.FromBase64String(stuffs [0]);
       var blob = Convert.FromBase64String (stuffs[1]);
 
-      //var integrityKey = new SecretKeySpec (pair.Private.GetEncoded (), HmacAlgorithm);
-      //var generatedMac = AesCbcWithIntegrity.GenerateMac (blob, integrityKey);
-      //if (!AesCbcWithIntegrity.ConstantTimeEq (generatedMac, mac)) {
-      //  throw new GeneralSecurityException ("bad mac");
-      //}
-
       // prevent padding oracle attack
-      Signature s = Signature.GetInstance (hmacAlgorithm);
+      Signature s = Signature.GetInstance (HmacAlgorithm);
       s.InitVerify (cert.PublicKey);
       s.Update (blob);
       if (!s.Verify (signature)) {
