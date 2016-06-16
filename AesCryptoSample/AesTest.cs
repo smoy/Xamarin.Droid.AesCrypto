@@ -25,6 +25,9 @@ namespace AesCryptoSample
       var mySecretText = "This is my secret";
       var mySecretBytes = Encoding.UTF8.GetBytes (mySecretText);
       var cipherText = AesCbcWithIntegrity.Encrypt (mySecretBytes, privateKey);
+
+      Assert.False (AesCbcWithIntegrity.ConstantTimeEq (mySecretBytes, cipherText.GetCipherText ()));
+
       var decryptedBytes = AesCbcWithIntegrity.Decrypt (cipherText, privateKey);
       var decryptedText = Encoding.UTF8.GetString (decryptedBytes);
 
@@ -38,6 +41,10 @@ namespace AesCryptoSample
       var secretKeyWrapper = new SecretKeyWrapper (context, UnitTestAlias);
       var secretKeys = AesCbcWithIntegrity.GenerateKey ();
       var wrappedKey = secretKeyWrapper.Wrap (secretKeys.ConfidentialityKey);
+
+      Assert.False (AesCbcWithIntegrity.ConstantTimeEq (secretKeys.ConfidentialityKey.GetEncoded (),
+                                                      wrappedKey));
+
       var unwrappedKey = secretKeyWrapper.Unwrap (wrappedKey);
 
       Assert.True (AesCbcWithIntegrity.ConstantTimeEq (secretKeys.ConfidentialityKey.GetEncoded (),
@@ -50,6 +57,9 @@ namespace AesCryptoSample
       var mySecretText = "This is my secret";
       const string completeExampleAlias = "CompleteExample";
       var encryptedBundle = EncryptionUtil.Encrypt (context, completeExampleAlias, mySecretText);
+
+      Assert.False (mySecretText == encryptedBundle.EncryptedText);
+
       var decryptedText = EncryptionUtil.Decrypt (context, completeExampleAlias, encryptedBundle);
 
       Assert.True (mySecretText == decryptedText,
